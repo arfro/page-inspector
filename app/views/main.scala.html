@@ -13,13 +13,20 @@
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-
     </head>
     <body>
         @* And here's where we render the `Html` object containing
          * the page content. *@
         @content
+        <h1 style="text-align: center"> @title </h1>
+        <p style="text-align: center">Let's inspect that page...</p>
+        <form name="RegForm" action="/submit.php" onsubmit="return GEEKFORGEEKS()" method="post" style="text-align: center">
 
-      <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
+            <p>Page link: <input type="text" size=100 name="pageLink"> </p><br>
+            <p><input type="submit" value="send" name="Submit">
+            </p>
+        </form>
+
+        <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
     </body>
 </html>
