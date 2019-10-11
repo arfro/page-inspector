@@ -9,6 +9,8 @@ scalaVersion := "2.13.0"
 
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test
+libraryDependencies += "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.4"
+libraryDependencies += "org.jsoup" % "jsoup" % "1.7.2"
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "scout24.controllers._"

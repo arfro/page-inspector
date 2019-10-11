@@ -1,0 +1,1 @@
+- only allow to access main page
