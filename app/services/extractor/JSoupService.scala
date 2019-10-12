@@ -1,5 +1,7 @@
 package services.extractor
 
+import java.net.URL
+
 import config.AppConfig
 
 import scala.util.{Failure, Success, Try}
@@ -9,12 +11,12 @@ import org.jsoup.safety.Whitelist
 
 class JSoupService extends {
 
-  def extractHtml(link: String) =
+  def extractHtml(link: String): Option[Document] =
     Try(Jsoup // all java code in Try monad
       .connect(sanitizeInput(link))
       .timeout(AppConfig.jsoupTimeout)
       .get()
-    )
+    ).toOption
 
   def getPageTitle(doc: Document): Option[String] =
     Try(doc.title).fold(_ => None, title => Some(title))
@@ -31,9 +33,24 @@ class JSoupService extends {
       case Failure(_) => None
     }
 
-  def getAllHeadings(doc: Document) = doc.clone()
+  def getAllHeadings(doc: Document): List[Map[String, Int]] =
+    (1 to 6).map(nr => Map {
+      s"h$nr" -> doc.select(s"h$nr").toArray.length
+    }).toList
 
-  def getAllLinks(doc: Document) = doc.select("a[href]")
+  def getAllLinks(doc: Document): List[String] = {
+    var allLinks: List[String] = List() // lesser evil to have a var in a local scope only btu not ideal
 
-  private def sanitizeInput(link: String) = Jsoup.clean(link, Whitelist.basic())
+    doc.getElementsByTag("a")
+      .stream()
+      .forEach(elem => {
+        allLinks = elem.attr("href") :: allLinks
+      })
+
+    allLinks
+  }
+
+  def containsLoginForm(doc: Document): Boolean = false
+
+  private def sanitizeInput(link: String): String = Jsoup.clean(link, Whitelist.basic())
 }
