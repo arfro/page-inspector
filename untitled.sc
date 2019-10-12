@@ -13,16 +13,16 @@ def extractHtml(link: String) =
     .get()
   )
 
-val doc = extractHtml("http://github.com").get
+val doc = extractHtml("https://www.spiegel.de/meinspiegel/login.html").get
 
-var allLinks: List[String] = List()
+var allInputs: List[String] = List()
 
-doc.getElementsByTag("a")
+doc.getElementsByTag("input")
   .stream()
   .forEach(elem => {
-    allLinks = elem.attr("href") :: allLinks
+    allInputs = elem.attr("name") :: allInputs
   })
 
-allLinks.partition(s => s.startsWith("/") || s.startsWith("#"))
+allInputs
 
-//.forEach(link => println(link.attr("href")))
+allInputs.filter(_.toLowerCase contains ("login"))

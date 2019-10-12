@@ -1,7 +1,5 @@
 package services.extractor
 
-import java.net.URL
-
 import config.AppConfig
 
 import scala.util.{Failure, Success, Try}
@@ -28,7 +26,7 @@ class JSoupService extends {
       .filter(_.isInstanceOf[DocumentType])
       .map(_.toString)
       .headOption
-    ) match { // I could have a map here that does a lookup of translating to human language
+    ) match { // I could have a map here that does a lookup of translating to human language e.g. <!DOCTYPE html> -> "HTML 5" etc
       case Success(value) => value
       case Failure(_) => None
     }
@@ -50,7 +48,17 @@ class JSoupService extends {
     allLinks
   }
 
-  def containsLoginForm(doc: Document): Boolean = false
+  def containsLoginForm(doc: Document): Boolean = {
+    var allInputs: List[String] = List()
+
+    doc.getElementsByTag("input")
+      .stream()
+      .forEach(elem => {
+        allInputs = elem.attr("name") :: allInputs
+      })
+
+    allInputs.filter(_.toLowerCase contains ("login")).size > 0
+  }
 
   private def sanitizeInput(link: String): String = Jsoup.clean(link, Whitelist.basic())
 }

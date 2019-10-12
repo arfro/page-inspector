@@ -3,6 +3,7 @@ package controllers
 import javax.inject._
 import play.api._
 import play.api.mvc._
+import services.HtmlExtractorService
 import services.extractor.JSoupService
 
 /**
@@ -20,7 +21,15 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
    * a path of `/`.
    */
   def index() = Action { implicit request: Request[AnyContent] => {
-    println(new JSoupService extractHtml("www.google.com"))
+    val JSoupService = new JSoupService
+    val htmlExtractorService = new HtmlExtractorService(JSoupService)
+    htmlExtractorService.extractHtml("https://www.spiegel.de/meinspiegel/login.html").map{
+      page =>
+        println(htmlExtractorService.getAllHeadings(page) + "\n\n\n\n")
+        println(htmlExtractorService.getAllLinksGroupedByDomain(page) + "\n\n\n\n")
+        println(htmlExtractorService.getHtmlVersion(page) + "\n\n\n\n")
+        println(htmlExtractorService.containsLoginForm(page) + "\n\n\n\n")
+    }
     Ok(views.html.index())
   }
   }
