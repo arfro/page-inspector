@@ -1,4 +1,4 @@
-package services.extractor
+package services.inspector
 
 import config.AppConfig
 
@@ -7,7 +7,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, DocumentType}
 import org.jsoup.safety.Whitelist
 
-class JSoupService extends {
+class JSoupInspectorService extends {
 
   def extractHtml(link: String): Option[Document] =
     Try(Jsoup // all java code in Try monad

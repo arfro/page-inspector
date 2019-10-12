@@ -4,21 +4,20 @@ import java.net.URL
 
 import errors.jsoup.HtmlExtractionError
 import models.jsoup.Page
-import services.extractor.JSoupService
+import services.inspector.JSoupInspectorService
 
 import scala.util.Try
 
-class HtmlExtractorService(JsoupService: JSoupService) {
+class HtmlInspectionService(JsoupService: JSoupInspectorService) {
 
   def extractHtml(link: String): Either[HtmlExtractionError, Page] = {
     JsoupService.extractHtml(link) match {
       case Some(doc) => {
         val maybeDomainName = getHostName(link)
-        println(s"$maybeDomainName --------------------")
         val page = Page(rawInputLink = link, hostName = maybeDomainName, doc = doc)
         Right(page)
       }
-      case None => Left(HtmlExtractionError("Could not extract HTML page")) // better error handling here?
+      case None => Left(HtmlExtractionError("Could not extract HTML page")) // better error handling here in case incorrect input etc
     }
   }
 

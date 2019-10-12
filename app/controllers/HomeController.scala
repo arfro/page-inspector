@@ -3,8 +3,8 @@ package controllers
 import javax.inject._
 import play.api._
 import play.api.mvc._
-import services.HtmlExtractorService
-import services.extractor.JSoupService
+import services.HtmlInspectionService
+import services.inspector.JSoupInspectorService
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -21,23 +21,16 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
    * a path of `/`.
    */
   def index() = Action { implicit request: Request[AnyContent] => {
-    val JSoupService = new JSoupService
-    val htmlExtractorService = new HtmlExtractorService(JSoupService)
-    htmlExtractorService.extractHtml("https://www.spiegel.de/meinspiegel/login.html").map{
-      page =>
-        println(htmlExtractorService.getAllHeadings(page) + "\n\n\n\n")
-        println(htmlExtractorService.getAllLinksGroupedByDomain(page) + "\n\n\n\n")
-        println(htmlExtractorService.getHtmlVersion(page) + "\n\n\n\n")
-        println(htmlExtractorService.containsLoginForm(page) + "\n\n\n\n")
-    }
+//    val JSoupService = new JSoupInspectorService
+//    val htmlExtractorService = new HtmlInspectionService(JSoupService)
+//    htmlExtractorService.extractHtml("httkkspiegel/login.html").map{
+//      page =>
+//        println(htmlExtractorService.getAllHeadings(page) + "\n\n\n\n")
+//        println(htmlExtractorService.getAllLinksGroupedByDomain(page) + "\n\n\n\n")
+//        println(htmlExtractorService.getHtmlVersion(page) + "\n\n\n\n")
+//        println(htmlExtractorService.containsLoginForm(page) + "\n\n\n\n")
+ //   }
     Ok(views.html.index())
   }
   }
-
-//  Http.RequestBuilder request =
-//    new Http.RequestBuilder()
-//      .method(GET)
-//      .header(Http.HeaderNames.HOST, "localhost")
-//      .uri("/xx/Kiwi");
-
 }
