@@ -1,4 +1,4 @@
-src/main/scala/logs
+src/main/scala/main.scala.logs
 target
 /.idea
 /.idea_modules

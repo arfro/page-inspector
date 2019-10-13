@@ -5,7 +5,7 @@ import models.{Page, PageInspectionResult}
 import models.forms.PlayFormMappers
 import play.api.mvc._
 import services.HtmlInspectionService
-import util.Util
+import unit.util.Util
 
 @Singleton
 class HtmlInspectionController @Inject()(cc: ControllerComponents)

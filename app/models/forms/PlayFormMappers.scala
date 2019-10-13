@@ -8,6 +8,7 @@ case class HtmlInputForm(str: String)
 
 object PlayFormMappers {
 
+  // this value is used in HtmlInspectionController to bind a request string to case class of type HtmlInput
   val input = Form(
     mapping(
       "textFromInputForm" -> text

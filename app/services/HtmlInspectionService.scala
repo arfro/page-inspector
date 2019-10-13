@@ -1,9 +1,9 @@
 package services
 
 import java.net.URL
-
-import errors.HtmlExtractionError
 import javax.inject.Inject
+
+import models.errors.HtmlExtractionError
 import models.Page
 import services.inspector.JSoupInspectorService
 
