@@ -1,6 +1,30 @@
-@(htmlVersion: String)(pageTitle: String)(headings: List[Map[String, Int]])(links: Map[String, List[String]])(loginPresent: Boolean)
+@(htmlVersion: String)(pageTitle: String)(headings: Map[String, Int])(links: Map[String, List[String]])(loginPresent: Boolean)
 
-<div style="text-align: center">results</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+    <style>
+        table {
+          border-collapse: collapse;
+          width: 100%;
+        }
+
+        th, td {
+          text-align: left;
+          padding: 8px;
+        }
+
+        tr:nth-child(even){background-color: #f2f2f2}
+
+        th {
+          background-color: #4CAF50;
+          color: white;
+        }
+    </style>
+</head>
+<body>
 
 <table style="text-align: center">
     <tr>
@@ -13,11 +37,22 @@
     </tr>
     <tr>
         <td>Headings</td>
-        <td>@{headings}</td>
+        <td>@{
+            (1 to 6).map(
+                    nr => s"H$nr - ${headings.get(s"h$nr").getOrElse("unknown")}; "
+                )
+            }
+        </td>
     </tr>
     <tr>
         <td>Links</td>
-        <td>@{links}</td>
+        <td>
+            <b>Internal</b><br>
+            @{links.get("internal").get}
+            <br><br>
+            <b>External</b><br>
+            @{links.get("external").get}
+        </td>
     </tr>
     <tr>
         <td>Login form present?</td>
@@ -25,3 +60,7 @@
     </tr>
 </table>
 </div>
+
+<script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
+    </body>
+</html>

@@ -25,7 +25,7 @@ class HtmlInspectionService(JsoupService: JSoupInspectorService) {
 
   def getHtmlVersion(page: Page): Option[String] = JsoupService.getHtmlVersion(page.doc)
 
-  def getAllHeadings(page: Page): List[Map[String, Int]] = JsoupService.getAllHeadings(page.doc)
+  def getAllHeadings(page: Page): Map[String, Int] = JsoupService.getAllHeadings(page.doc)
 
   def getAllLinksGroupedByDomain(page: Page): Map[String, List[String]] = {
     def domainNamePredicate: String => Boolean = {

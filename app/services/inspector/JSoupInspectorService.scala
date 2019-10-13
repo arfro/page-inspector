@@ -31,10 +31,10 @@ class JSoupInspectorService extends {
       case Failure(_) => None
     }
 
-  def getAllHeadings(doc: Document): List[Map[String, Int]] =
-    (1 to 6).map(nr => Map {
+  def getAllHeadings(doc: Document): Map[String, Int] =
+    (1 to 6).map(nr => {
       s"h$nr" -> doc.select(s"h$nr").toArray.length
-    }).toList
+    }).toMap
 
   def getAllLinks(doc: Document): List[String] = {
     var allLinks: List[String] = List() // lesser evil to have a var in a local scope only btu not ideal
