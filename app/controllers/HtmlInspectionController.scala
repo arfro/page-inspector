@@ -37,7 +37,13 @@ class HtmlInspectionController @Inject()(cc: ControllerComponents) extends Abstr
             case Right(doc) => {
               val getAll2 = getAll(doc)
               println(getAll2)
-              Ok(Json.toJson(getAll2))
+              Ok(views.html.result
+                (getAll2.htmlVersion.getOrElse("unknown"))
+                (getAll2.title.getOrElse("unknown"))
+                (getAll2.headings)
+                (getAll2.links)
+                (getAll2.isLogin)
+              )
             }
             case Left(ex) => {
               println(ex)

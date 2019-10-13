@@ -11,5 +11,3 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 +nocsrf
 POST    /                           controllers.HtmlInspectionController.inspect
-
-

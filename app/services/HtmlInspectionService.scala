@@ -41,7 +41,7 @@ class HtmlInspectionService(JsoupService: JSoupInspectorService) {
 
     Map(
       "internal" -> allLinksTuple._1,
-      "external" -> allLinksTuple._2
+      "external" -> allLinksTuple._2 // clear empty
     )
   }
 

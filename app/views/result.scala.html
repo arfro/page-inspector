@@ -1,0 +1,27 @@
+@(htmlVersion: String)(pageTitle: String)(headings: List[Map[String, Int]])(links: Map[String, List[String]])(loginPresent: Boolean)
+
+<div style="text-align: center">results</div>
+
+<table style="text-align: center">
+    <tr>
+        <td>HTML version</td>
+        <td>@{htmlVersion}</td>
+    </tr>
+    <tr>
+        <td>Page title</td>
+        <td>@{pageTitle}</td>
+    </tr>
+    <tr>
+        <td>Headings</td>
+        <td>@{headings}</td>
+    </tr>
+    <tr>
+        <td>Links</td>
+        <td>@{links}</td>
+    </tr>
+    <tr>
+        <td>Login form present?</td>
+        <td>@{loginPresent}</td>
+    </tr>
+</table>
+</div>
