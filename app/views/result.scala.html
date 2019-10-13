@@ -37,21 +37,24 @@
     </tr>
     <tr>
         <td>Headings</td>
-        <td>@{
-            (1 to 6).map(
-                    nr => s"H$nr - ${headings.get(s"h$nr").getOrElse("unknown")}; "
-                )
+        <td>@for(i <- 1 to 6){
+                <li>h@i: @headings.get(s"h$i").getOrElse("unknown")</li>
             }
         </td>
+
     </tr>
     <tr>
         <td>Links</td>
         <td>
-            <b>Internal</b><br>
-            @{links.get("internal").get}
+            <b>Internal</b> (@links.get("internal").get.length link(s))<br>
+            @for(link <- links.get("internal").get){
+                <li>@link</li>
+            }
             <br><br>
-            <b>External</b><br>
-            @{links.get("external").get}
+            <b>External</b>  (@links.get("external").get.length link(s))<br>
+            @for(link <- links.get("external").get){
+                <li>@link</li>
+            }
         </td>
     </tr>
     <tr>

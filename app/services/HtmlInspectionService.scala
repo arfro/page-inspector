@@ -21,9 +21,9 @@ class HtmlInspectionService(JsoupService: JSoupInspectorService) {
     }
   }
 
-  def getPageTitle(page: Page): Option[String] = JsoupService.getPageTitle(page.doc)
+  def getPageTitle(page: Page): String = JsoupService.getPageTitle(page.doc).getOrElse("unknown")
 
-  def getHtmlVersion(page: Page): Option[String] = JsoupService.getHtmlVersion(page.doc)
+  def getHtmlVersion(page: Page): String = JsoupService.getHtmlVersion(page.doc).getOrElse("unknown")
 
   def getAllHeadings(page: Page): Map[String, Int] = JsoupService.getAllHeadings(page.doc)
 
@@ -36,12 +36,12 @@ class HtmlInspectionService(JsoupService: JSoupInspectorService) {
         }
     }
 
-    val allLinksTuple = JsoupService.getAllLinks(page.doc)
+    val allLinksTuple = JsoupService.getAllLinks(page.doc).filter(_ != "")
       .partition(domainNamePredicate)
 
     Map(
       "internal" -> allLinksTuple._1,
-      "external" -> allLinksTuple._2 // clear empty
+      "external" -> allLinksTuple._2
     )
   }
 

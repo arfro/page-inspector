@@ -45,7 +45,7 @@ class JSoupInspectorService extends {
         allLinks = elem.attr("href") :: allLinks
       })
 
-    allLinks
+    allLinks.distinct
   }
 
   def containsLoginForm(doc: Document): Boolean = {
