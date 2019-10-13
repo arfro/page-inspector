@@ -4,13 +4,13 @@ import play.api.data.Forms.mapping
 import play.api.data.Form
 import play.api.data.Forms._
 
-object PlayFormMappers {
+case class HtmlInputForm(str: String)
 
-  case class HtmlInputForm(str: String)
+object PlayFormMappers {
 
   val input = Form(
     mapping(
-      "str" -> text
+      "textFromInputForm" -> text
     )(HtmlInputForm.apply)(HtmlInputForm.unapply)
   )
 

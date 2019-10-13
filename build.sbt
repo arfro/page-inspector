@@ -1,21 +1,13 @@
 name := """scout24-test"""
 organization := "scout24"
-
-version := "1.0-SNAPSHOT"
-
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+version := "0.1"
 
 scalaVersion := "2.13.0"
 
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
+val scalaTestPlusPlayVersion = "4.0.3"
+val jsoupVersion = "1.7.2"
+
 libraryDependencies += guice
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test
-libraryDependencies += "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.4"
-libraryDependencies += "org.jsoup" % "jsoup" % "1.7.2"
-libraryDependencies += "org.webjars" % "jquery" % "2.1.3"
-
-
-// Adds additional packages into Twirl
-//TwirlKeys.templateImports += "scout24.controllers._"
-
-// Adds additional packages into conf/routes
-// play.sbt.routes.RoutesKeys.routesImport += "scout24.binders._"
+libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusPlayVersion % Test
+libraryDependencies += "org.jsoup" % "jsoup" % jsoupVersion

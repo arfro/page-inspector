@@ -1,48 +1,53 @@
 package controllers
 
 import javax.inject._
+import models.{Page, PageInspectionResult}
 import models.forms.PlayFormMappers
-import models.jsoup.{Page, PageInspectionResult}
-import play.api.libs.json.Json
 import play.api.mvc._
 import services.HtmlInspectionService
-import services.inspector.JSoupInspectorService
+import util.Util
 
 @Singleton
-class HtmlInspectionController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class HtmlInspectionController @Inject()(cc: ControllerComponents)
+                                        (inspectionService: HtmlInspectionService) extends AbstractController(cc) {
 
-  val inspectionService = new HtmlInspectionService(new JSoupInspectorService)
+  def inspect(): Action[AnyContent] = Action { implicit request => handleRequest }
 
-  def inspect(): Action[AnyContent] = Action { implicit request => {
-        val maybeLink = PlayFormMappers.input.bindFromRequest().data.get("pageLink")
+  private def handleRequest(implicit request: Request[AnyContent]) = {
+    val maybeLink = PlayFormMappers.input.bindFromRequest().data.get("pageLink")
 
-      maybeLink match {
-        case Some(link) if link.trim.isEmpty => Ok("bad")
-        case Some(link) => {
-          handleInspection(link) match {
-            case Right(doc) => {
-              val getAll2 = getAll(doc)
-              Ok(views.html.result
-                (getAll2.htmlVersion)
-                (getAll2.title)
-                (getAll2.headings)
-                (getAll2.links)
-                (getAll2.isLogin)
-              )
-            }
-            case Left(ex) => {
-              println(ex)
-                BadRequest(s"problem $ex")
-            }
-          }
-        }
-        case None => BadRequest
-      }
-
+    maybeLink match {
+      case Some(link) if link.trim.isEmpty => BadRequest("Empty input")
+      case Some(link) => (sendForHtmlInspection andThen handleHtmlInspectionResponse)(Util.sanitizeInput(link))
+      case None => BadRequest("Problem with a request")
     }
   }
 
-  def getAll(page: Page): PageInspectionResult = {
+  private def sendForHtmlInspection: String => Either[String, Page] = { link =>
+    inspectionService.extractHtml(link) match {
+      case Right(doc) => Right(doc)
+      case Left(ex) => Left(s"Could not extract HTML. Error: $ex")
+    }
+  }
+
+  private def handleHtmlInspectionResponse: Either[String, Page] => Result = { response =>
+    response match {
+      case Right(doc) => {
+        val pageInspectionResult = pageToPageInspectionResult(doc)
+
+        Ok(views.html.result
+          (pageInspectionResult.htmlVersion)
+          (pageInspectionResult.title)
+          (pageInspectionResult.headings)
+          (pageInspectionResult.links)
+          (pageInspectionResult.isLogin)
+        )
+      }
+      case Left(ex) => BadRequest(ex)
+    }
+  }
+
+  private def pageToPageInspectionResult(page: Page): PageInspectionResult = {
     val htmlVersion = inspectionService.getHtmlVersion(page)
     val title = inspectionService.getPageTitle(page)
     val headings = inspectionService.getAllHeadings(page)
@@ -50,15 +55,6 @@ class HtmlInspectionController @Inject()(cc: ControllerComponents) extends Abstr
     val isLogin = inspectionService.containsLoginForm(page)
     PageInspectionResult(htmlVersion = htmlVersion, title = title, headings = headings, links = links, isLogin = isLogin)
   }
-
-  def handleInspection(link: String) = {
-
-    inspectionService.extractHtml(link) match {
-      case Right(doc) => Right(doc)
-      case Left(ex) => Left("error")
-    }
-  }
-
 
 
 }

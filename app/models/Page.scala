@@ -1,4 +1,4 @@
-package models.jsoup
+package models
 
 import org.jsoup.nodes.Document
 

@@ -1,10 +1,7 @@
 package config
 
-import play.twirl.api.Html
-
 object AppConfig {
-  // normally this would be in application.conf
+  // normally this would be in application.conf, I would use a TypeSafe lib to parse
   val jsoupTimeout = 4000
 
-  Html
 }

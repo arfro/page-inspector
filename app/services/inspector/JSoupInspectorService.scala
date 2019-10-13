@@ -7,14 +7,14 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, DocumentType}
 import org.jsoup.safety.Whitelist
 
-class JSoupInspectorService extends {
+class JSoupInspectorService {
 
-  def extractHtml(link: String): Option[Document] =
-    Try(Jsoup // all java code in Try monad
-      .connect(sanitizeInput(link))
+  def extractHtml(link: String): Try[Document] =
+    Try(Jsoup
+      .connect(link)
       .timeout(AppConfig.jsoupTimeout)
       .get()
-    ).toOption
+    )
 
   def getPageTitle(doc: Document): Option[String] =
     Try(doc.title).fold(_ => None, title => Some(title))
@@ -36,29 +36,22 @@ class JSoupInspectorService extends {
       s"h$nr" -> doc.select(s"h$nr").toArray.length
     }).toMap
 
-  def getAllLinks(doc: Document): List[String] = {
-    var allLinks: List[String] = List() // lesser evil to have a var in a local scope only btu not ideal
+  def getAllLinks(doc: Document): List[String] =
+    getAttributeForAllTags("a", "href")(doc)
 
-    doc.getElementsByTag("a")
+  def containsLoginForm(doc: Document): Boolean =
+    getAttributeForAllTags("input", "name")(doc)
+      .filter(_.toLowerCase contains ("login")).size > 0
+
+  private def getAttributeForAllTags(tagName: String, attributeKey: String): Document => List[String] = { doc: Document =>
+    var allLinks: List[String] = List() // not too happy with using vars, even in a private, local scope. I would like improve this
+
+    doc.getElementsByTag(tagName)
       .stream()
       .forEach(elem => {
-        allLinks = elem.attr("href") :: allLinks
+        allLinks = elem.attr(attributeKey) :: allLinks
       })
 
     allLinks.distinct
   }
-
-  def containsLoginForm(doc: Document): Boolean = {
-    var allInputs: List[String] = List()
-
-    doc.getElementsByTag("input")
-      .stream()
-      .forEach(elem => {
-        allInputs = elem.attr("name") :: allInputs
-      })
-
-    allInputs.filter(_.toLowerCase contains ("login")).size > 0
-  }
-
-  private def sanitizeInput(link: String): String = Jsoup.clean(link, Whitelist.basic())
 }
