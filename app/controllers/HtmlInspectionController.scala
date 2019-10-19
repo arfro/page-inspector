@@ -5,7 +5,7 @@ import models.{Page, PageInspectionResult}
 import models.forms.PlayFormMappers
 import play.api.mvc._
 import services.HtmlInspectionService
-import services.inspector.JSoupInspectorService
+import services.inspector.jsoup.JSoupInspectorService
 import unit.util.Util
 
 @Singleton

@@ -1,21 +1,22 @@
-package services.inspector
+package services.inspector.jsoup
 
 import config.AppConfig
-import org.jsoup.Jsoup
+import javax.inject.Inject
+import org.jsoup.{Connection, Jsoup}
+import org.jsoup.nodes.{Document, DocumentType}
+import services.inspector.InspectorService
 
 import scala.util.{Failure, Success, Try}
-import org.jsoup.nodes.{Document, DocumentType}
 
-class JSoupInspectorService extends InspectorService[Document] {
+class JSoupInspectorService @Inject()(JSoupWrapper: JSoupWrapper) extends InspectorService[Document] {
 
-  def connectAndGetHtml: String => Document =
-    link => Jsoup
-    .connect(link)
-    .timeout(AppConfig.jsoupTimeout)
-    .get()
+  private def connectAndGetHtmlFunction: String => Document =
+    link => JSoupWrapper
+      .connect(link)
+      .get()
 
   def extractHtml(link: String): Try[Document] =
-    Try(connectAndGetHtml(link))
+    Try(connectAndGetHtmlFunction(link))
 
   def getPageTitle(doc: Document): Option[String] = Try(doc.title).fold(_ => None, title => Some(title))
 
