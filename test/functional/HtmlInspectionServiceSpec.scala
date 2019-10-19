@@ -55,13 +55,28 @@ class HtmlInspectionServiceSpec extends FunctionalTest {
       result mustBe "unknown"
     }
   }
-//
-//  "JSoupInspectorService#getHtmlVersion" should {
-//    "return correct data for http://www.google.com" in {
-//      val page = "http://www.google.com"
-//      val doc = htmlInspectionServiceMock.extractHtml(page).right.get
-//      htmlInspectionServiceMock.getHtmlVersion(doc) mustBe "<!DOCTYPE html>"
-//    }
-//  }
+
+  "HtmlInspectionService#getHtmlVersion" should {
+    "return data for existing html version" in {
+      val htmlVersion = "<!DOCTYPE html>"
+      Mockito.when(exampleDocMock.childNodes()).thenReturn(childNodesMock)
+      Mockito.when(examplePageMock.doc).thenReturn(exampleDocMock)
+      Mockito.when(JSoupInspectorServiceMock.getHtmlVersion(exampleDocMock)).thenReturn(Some(htmlVersion))
+      val result = htmlInspectionServiceUT.getHtmlVersion(examplePageMock)
+
+      result mustBe htmlVersion
+    }
+  }
+
+  it should {
+    "return unknown for a missing html version" in {
+      Mockito.when(exampleDocMock.childNodes()).thenReturn(childNodesMock)
+      Mockito.when(examplePageMock.doc).thenReturn(exampleDocMock)
+      Mockito.when(JSoupInspectorServiceMock.getHtmlVersion(exampleDocMock)).thenReturn(None)
+      val result = htmlInspectionServiceUT.getHtmlVersion(examplePageMock)
+
+      result mustBe "unknown"
+    }
+  }
 
 }
