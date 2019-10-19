@@ -6,20 +6,18 @@ import org.jsoup.Jsoup
 import scala.util.{Failure, Success, Try}
 import org.jsoup.nodes.{Document, DocumentType}
 
-class JSoupInspectorService extends InspectorService {
+class JSoupInspectorService extends InspectorService[Document] {
 
-  // This is one of the places where having higher order functions would be great for testing. Right now the implementation
-  // is tied to JSoup. Should all of the below be updated to take a function that goes (e.g. for extractHtml) String => Document
-  // it would be much easier to test and compose
+  def connectAndGetHtml: String => Document =
+    link => Jsoup
+    .connect(link)
+    .timeout(AppConfig.jsoupTimeout)
+    .get()
 
   def extractHtml(link: String): Try[Document] =
-    Try(Jsoup
-      .connect(link)
-      .timeout(AppConfig.jsoupTimeout)
-      .get())
+    Try(connectAndGetHtml(link))
 
-  def getPageTitle(doc: Document): Option[String] =
-    Try(doc.title).fold(_ => None, title => Some(title))
+  def getPageTitle(doc: Document): Option[String] = Try(doc.title).fold(_ => None, title => Some(title))
 
   def getHtmlVersion(doc: Document): Option[String] =
     Try(

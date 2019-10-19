@@ -1,18 +1,19 @@
 package services
 
 import java.net.URL
-import javax.inject.Inject
 
+import javax.inject.Inject
 import models.errors.HtmlExtractionError
 import models.Page
-import services.inspector.JSoupInspectorService
+import org.jsoup.nodes.Document
+import services.inspector.InspectorService
 
 import scala.util.Try
 
-class HtmlInspectionService @Inject()(JsoupService: JSoupInspectorService) {
+class HtmlInspectionService @Inject()(inspectorService: InspectorService[Document]) {
 
   def extractHtml(link: String): Either[HtmlExtractionError, Page] = {
-    JsoupService.extractHtml(link)
+    inspectorService.extractHtml(link)
       .fold(_ => Left(HtmlExtractionError("Could not extract HTML page. Is your link correct?")),
       doc => {
         val maybeDomainName = getHostName(link)
@@ -21,11 +22,11 @@ class HtmlInspectionService @Inject()(JsoupService: JSoupInspectorService) {
       })
   }
 
-  def getPageTitle(page: Page): String = JsoupService.getPageTitle(page.doc).getOrElse("unknown")
+  def getPageTitle(page: Page): String = inspectorService.getPageTitle(page.doc).getOrElse("unknown")
 
-  def getHtmlVersion(page: Page): String = JsoupService.getHtmlVersion(page.doc).getOrElse("unknown")
+  def getHtmlVersion(page: Page): String = inspectorService.getHtmlVersion(page.doc).getOrElse("unknown")
 
-  def getAllHeadings(page: Page): Map[String, Int] = JsoupService.getAllHeadings(page.doc)
+  def getAllHeadings(page: Page): Map[String, Int] = inspectorService.getAllHeadings(page.doc)
 
   def getAllLinksGroupedByDomain(page: Page): Map[String, List[String]] = {
     def domainNamePredicate: String => Boolean = {
@@ -36,7 +37,7 @@ class HtmlInspectionService @Inject()(JsoupService: JSoupInspectorService) {
         }
     }
 
-    val allLinksTuple = JsoupService.getAllLinks(page.doc).filter(_ != "")
+    val allLinksTuple = inspectorService.getAllLinks(page.doc).filter(_ != "")
       .partition(domainNamePredicate)
 
     Map(
@@ -45,7 +46,7 @@ class HtmlInspectionService @Inject()(JsoupService: JSoupInspectorService) {
     )
   }
 
-  def containsLoginForm(page: Page): Boolean = JsoupService.containsLoginForm(page.doc)
+  def containsLoginForm(page: Page): Boolean = inspectorService.containsLoginForm(page.doc)
 
   private def getHostName(link: String): Option[String] = {
     Try(new URL(link).getHost.split("\\.")(0)).toOption

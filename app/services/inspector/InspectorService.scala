@@ -1,16 +1,18 @@
 package services.inspector
 
-import org.jsoup.nodes.Document
+import com.google.inject.ImplementedBy
 
 import scala.util.Try
 
-trait InspectorService {
+@ImplementedBy(classOf[JSoupInspectorService])
+trait InspectorService[A] {
 
-  def extractHtml(link: String): Try[Document]
-  def getPageTitle(doc: Document): Option[String]
-  def getHtmlVersion(doc: Document): Option[String]
-  def getAllHeadings(doc: Document): Map[String, Int]
-  def getAllLinks(doc: Document): List[String]
-  def containsLoginForm(doc: Document): Boolean
+  def connectAndGetHtml: String => A
+  def extractHtml(link: String): Try[A]
+  def getPageTitle(doc: A): Option[String]
+  def getHtmlVersion(doc: A): Option[String]
+  def getAllHeadings(doc: A): Map[String, Int]
+  def getAllLinks(doc: A): List[String]
+  def containsLoginForm(doc: A): Boolean
 
 }

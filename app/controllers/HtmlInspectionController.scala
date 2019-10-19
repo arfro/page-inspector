@@ -5,11 +5,13 @@ import models.{Page, PageInspectionResult}
 import models.forms.PlayFormMappers
 import play.api.mvc._
 import services.HtmlInspectionService
+import services.inspector.JSoupInspectorService
 import unit.util.Util
 
 @Singleton
 class HtmlInspectionController @Inject()(cc: ControllerComponents)
-                                        (inspectionService: HtmlInspectionService) extends AbstractController(cc) {
+                                        (htmlInspectionService: HtmlInspectionService)
+                                         extends AbstractController(cc) {
 
   def inspect(): Action[AnyContent] = Action { implicit request => handleRequest }
 
@@ -24,7 +26,7 @@ class HtmlInspectionController @Inject()(cc: ControllerComponents)
   }
 
   private def sendForHtmlInspection: String => Either[String, Page] = { link =>
-    inspectionService.extractHtml(link) match {
+    htmlInspectionService.extractHtml(link) match {
       case Right(doc) => Right(doc)
       case Left(ex) => Left(s"Could not extract HTML. Error: $ex")
     }
@@ -48,11 +50,11 @@ class HtmlInspectionController @Inject()(cc: ControllerComponents)
   }
 
   private def pageToPageInspectionResult(page: Page): PageInspectionResult = {
-    val htmlVersion = inspectionService.getHtmlVersion(page)
-    val title = inspectionService.getPageTitle(page)
-    val headings = inspectionService.getAllHeadings(page)
-    val links = inspectionService.getAllLinksGroupedByDomain(page)
-    val isLogin = inspectionService.containsLoginForm(page)
+    val htmlVersion = htmlInspectionService.getHtmlVersion(page)
+    val title = htmlInspectionService.getPageTitle(page)
+    val headings = htmlInspectionService.getAllHeadings(page)
+    val links = htmlInspectionService.getAllLinksGroupedByDomain(page)
+    val isLogin = htmlInspectionService.containsLoginForm(page)
     PageInspectionResult(htmlVersion = htmlVersion, title = title, headings = headings, links = links, isLogin = isLogin)
   }
 
