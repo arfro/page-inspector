@@ -3,8 +3,8 @@ package services
 import java.net.URL
 
 import javax.inject.Inject
-import models.errors.HtmlExtractionError
 import models.Page
+import models.errors.HtmlExtractionError
 import org.jsoup.nodes.Document
 import services.inspector.InspectorService
 

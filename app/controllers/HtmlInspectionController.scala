@@ -1,11 +1,10 @@
 package controllers
 
 import javax.inject._
-import models.{Page, PageInspectionResult}
 import models.forms.PlayFormMappers
+import models.{Page, PageInspectionResult}
 import play.api.mvc._
 import services.HtmlInspectionService
-import services.inspector.jsoup.JSoupInspectorService
 import unit.util.Util
 
 @Singleton

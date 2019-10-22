@@ -1,6 +1,8 @@
 package functional
 
 import fixture.FunctionalTest
+import org.jsoup.nodes.Node
+import org.jsoup.select.Elements
 import org.mockito.Mockito
 import services.inspector.jsoup.JSoupInspectorService
 
@@ -41,7 +43,6 @@ class JSoupInspectorServiceSpec extends FunctionalTest {
   "JSoupInspectorService#getPagetitle" should {
     "return empty string for a page title empty string" in {
       Mockito.when(exampleDocMock.title).thenReturn("")
-
       val result = jsoupInspectorServiceUT.getPageTitle(exampleDocMock)
 
       result mustBe Some("")
@@ -58,7 +59,41 @@ class JSoupInspectorServiceSpec extends FunctionalTest {
     }
   }
 
+  "JSoupInspectorService#getHtmlVersion" should {
+    "return if Html version detected" in {
+      val htmlVersion = "<!DOCTYPE html>"
+      Mockito.when(exampleDocMock.childNodes()).thenReturn(childNodesMock)
+      Mockito.when(nodeMock.toString).thenReturn(htmlVersion)
+      val result = jsoupInspectorServiceUT.getHtmlVersion(exampleDocMock)
+
+      result mustBe Some(htmlVersion)
+    }
+  }
+
+  it should {
+    "return None for a missing html version" in {
+      Mockito.when(exampleDocMock.childNodes()).thenReturn(new java.util.ArrayList[Node]())
+      val result = jsoupInspectorServiceUT.getHtmlVersion(exampleDocMock)
+
+      result mustBe None
+    }
+  }
 
 
+  "JSoupInspectorService#getAllHeadings" should {
+    "return correct amount of headers" in {
+      Mockito.when(exampleDocMock.childNodes()).thenReturn(childNodesMock)
+      Mockito.when(exampleDocMock.select("h1")).thenReturn(new Elements(elementMock, elementMock))
+      Mockito.when(exampleDocMock.select("h2")).thenReturn(new Elements())
+      Mockito.when(exampleDocMock.select("h3")).thenReturn(new Elements())
+      Mockito.when(exampleDocMock.select("h4")).thenReturn(new Elements())
+      Mockito.when(exampleDocMock.select("h5")).thenReturn(new Elements(elementMock))
+      Mockito.when(exampleDocMock.select("h5")).thenReturn(new Elements(elementMock))
+      Mockito.when(exampleDocMock.select("h6")).thenReturn(new Elements(elementMock, elementMock, elementMock))
+      val expected = Map("h1" -> 2, "h2" -> 0, "h3" -> 0, "h4" -> 0, "h5" -> 1, "h6" -> 3)
+
+      jsoupInspectorServiceUT.getAllHeadings(exampleDocMock) mustBe expected
+    }
+  }
 
 }

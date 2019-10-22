@@ -1,8 +1,8 @@
 package fixture
 
 import models.Page
-import org.jsoup.{Connection, Jsoup}
-import org.jsoup.nodes.{Document, Node}
+import org.jsoup.Connection
+import org.jsoup.nodes.{Document, DocumentType, Element, Node}
 import org.scalatestplus.mockito.MockitoSugar
 import services.HtmlInspectionService
 import services.inspector.jsoup.{JSoupInspectorService, JSoupWrapper}
@@ -12,7 +12,16 @@ class FunctionalTest extends UnitTest with MockitoSugar {
 
   val examplePageMock = mock[Page]
   val exampleDocMock = mock[Document]
-  val childNodesMock = mock[java.util.ArrayList[Node]]
+
+
+  val nodeMock = mock[DocumentType]
+  val childNodesMock = { //TODO: so ugly! :(
+    val childNodes = new java.util.ArrayList[Node]
+    childNodes.add(nodeMock)
+    childNodes
+  }
+
+  val elementMock = mock[Element]
 
   val JSoupInspectorServiceMock = mock[JSoupInspectorService]
   val htmlInspectionServiceMock = mock[HtmlInspectionService]

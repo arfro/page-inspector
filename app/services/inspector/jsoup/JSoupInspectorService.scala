@@ -1,8 +1,6 @@
 package services.inspector.jsoup
 
-import config.AppConfig
 import javax.inject.Inject
-import org.jsoup.{Connection, Jsoup}
 import org.jsoup.nodes.{Document, DocumentType}
 import services.inspector.InspectorService
 
