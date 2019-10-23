@@ -1,16 +1,20 @@
 package services.linkvalidation
 
+
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import config.AppConfig
 import javax.inject.Inject
+import play.api.http.Status
 import play.api.libs.ws._
 
 import scala.concurrent.Future
-import scala.util.Success
+import scala.util.{Failure, Success, Try}
 
 
-case class ValidationResult(s: String, sr: Int)
+trait ValidationResult
+case class ValidationSuccess(url: String, status: Int) extends ValidationResult
+case class ValidationFailure(url: String, problem: String) extends ValidationResult
 
 class LinkValidationService @Inject() (ws: WSClient)  {
 
@@ -23,24 +27,35 @@ class LinkValidationService @Inject() (ws: WSClient)  {
     val batches = listOfUrls.grouped(urlsPerBatch).toList
     println(s"Processing ${batches.length} batch(es)")
     // wrap each batch into a future if not empty then perform process batch
-    batches.map(processBatch)
+    val asyncBatch: Future[List[ValidationResult]] =
+      batches.foldLeft(Future.successful(List.empty[ValidationResult]))(processBatch)
+    // batches.flatMap(batch => processBatch(batch))
+    asyncBatch
   }
 
-  private def processBatch(batch: List[String]): Future[List[ValidationResult]] = {
+  private def processBatch(results: Future[List[ValidationResult]], batch: List[String]): Future[List[ValidationResult]] = {
 
-    val results: Future[List[ValidationResult]] = Future.successful(List.empty)
-
-    val batchFutures = batch.map(url => {
-      ws.url(url).withRequestTimeout(10000.millis).get().map(f => ValidationResult(url, f.status))
+    results.flatMap{ responses =>
+    val batchFutures: List[Future[ValidationResult]] = batch.map(url => {
+      ws.url(url).withRequestTimeout(2000.millis).get().map {
+          case d => ValidationSuccess(url, d.status)
+        }.recover{case e: Exception => ValidationFailure(url, e.getMessage)}
     })
 
     val batchFuture: Future[List[ValidationResult]] = Future.sequence(batchFutures)
 
-    val res2: Future[List[ValidationResult]] = for {
-      result <- results
-      ba <- batchFuture
-    } yield result ++ ba
-      res2
+    batchFuture.map { batchResponses =>
+      println("Finished a batch")
+      responses ++ batchResponses
+    }}
+//
+//    val batchFuture: List[Future[ValidationResult]] = batchFutures
+//
+//    val res2: Future[List[ValidationResult]] = for {
+//      result <- results
+//      ba <- batchFuture
+//    } yield result ++ ba
+//      res2
 
 
   }
