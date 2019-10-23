@@ -3,10 +3,11 @@ package services.inspector.jsoup
 import javax.inject.Inject
 import org.jsoup.nodes.{Document, DocumentType}
 import services.inspector.InspectorService
+import services.linkvalidation.LinkValidationService
 
 import scala.util.{Failure, Success, Try}
 
-class JSoupInspectorService @Inject()(JSoupWrapper: JSoupWrapper) extends InspectorService[Document] {
+class JSoupInspectorService @Inject()(JSoupWrapper: JSoupWrapper, linkValidationService: LinkValidationService) extends InspectorService[Document] {
 
   private def connectAndGetHtmlFunction: String => Document =
     link => JSoupWrapper
@@ -35,8 +36,9 @@ class JSoupInspectorService @Inject()(JSoupWrapper: JSoupWrapper) extends Inspec
       s"h$nr" -> doc.select(s"h$nr").toArray.length
     }).toMap
 
-  def getAllLinks(doc: Document): List[String] =
+  def getAllLinks(doc: Document): List[String] = {
     getAttributeForAllTags("a", "href")(doc)
+  }
 
   def containsLoginForm(doc: Document): Boolean =
     getAttributeForAllTags("input", "name")(doc)

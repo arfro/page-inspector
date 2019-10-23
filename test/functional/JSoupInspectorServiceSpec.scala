@@ -11,7 +11,7 @@ import scala.util.{Failure, Success}
 
 class JSoupInspectorServiceSpec extends FunctionalTest {
 
-  val jsoupInspectorServiceUT = new JSoupInspectorService(jsoupWrapperMock)
+  val jsoupInspectorServiceUT = new JSoupInspectorService(jsoupWrapperMock, null) // TODO: add linkValidationService when ready
 
   "JSoupInspectorService#extractHtml" should {
     "return success for a valid link" in {

@@ -10,6 +10,7 @@ val scalaTestVersion = "3.0.8"
 val mockitoVersion = "3.0.0"
 
 libraryDependencies += guice
+libraryDependencies += ws
 libraryDependencies += "org.jsoup" % "jsoup" % jsoupVersion
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusPlayVersion % "test"
 libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % "test"

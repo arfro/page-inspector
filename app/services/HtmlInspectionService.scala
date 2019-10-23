@@ -7,10 +7,12 @@ import models.Page
 import models.errors.HtmlExtractionError
 import org.jsoup.nodes.Document
 import services.inspector.InspectorService
+import services.linkvalidation.LinkValidationService
 
+import scala.concurrent.Await
 import scala.util.Try
 
-class HtmlInspectionService @Inject()(inspectorService: InspectorService[Document]) {
+class HtmlInspectionService @Inject()(inspectorService: InspectorService[Document], linkValidationService: LinkValidationService) {
 
   def extractHtml(link: String): Either[HtmlExtractionError, Page] = {
     inspectorService.extractHtml(link)
@@ -32,18 +34,26 @@ class HtmlInspectionService @Inject()(inspectorService: InspectorService[Documen
     def domainNamePredicate: String => Boolean = {
       link =>
         page.hostName match { // if hostname is "x.com" then we can be fairly sure any link containing "x." will be an internal link
-          case Some(hostName) => link.contains(s"$hostName.") || link.startsWith("/") || link.startsWith("#")
-          case None           => link.startsWith("/")
+          case Some(hostName) => link.startsWith("/") || link.startsWith("#") || link.contains(s"$hostName.") || link.contains("javascript:")
+          case None           => link.startsWith("/") || link.startsWith("#")
         }
     }
 
     val allLinksTuple = inspectorService.getAllLinks(page.doc).filter(_ != "")
       .partition(domainNamePredicate)
 
-    Map(
+    val res = Map(
       "internal" -> allLinksTuple._1,
       "external" -> allLinksTuple._2
     )
+
+
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val rees = linkValidationService.validate(res.get("external").get)
+
+    rees.map(fut => fut.map(println(_)))
+
+    res
   }
 
   def containsLoginForm(page: Page): Boolean = inspectorService.containsLoginForm(page.doc)
