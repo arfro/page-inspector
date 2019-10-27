@@ -9,14 +9,12 @@ import play.api.libs.ws._
 
 import scala.concurrent.Future
 
-
+// TODO: move this
 trait ValidationResult
 case class ValidationSuccess(url: String, status: Int) extends ValidationResult
 case class ValidationFailure(url: String, problem: String) extends ValidationResult
 
 class LinkValidationService @Inject() (ws: WSClient)  {
-
-  // TODO: inject execution context
 
   def validate(listOfUrls: List[String]): Future[List[ValidationResult]] = batchProcess(listOfUrls, AppConfig.urlsPerBatch)
 

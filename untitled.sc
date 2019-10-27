@@ -1,10 +1,3 @@
-val l = List(List(1), List(2), List(3)).grouped(3).toList
+val l = List(1,2,3,4,5)
 
-def lint(left: List[String], right: List[List[Int]]): List[String] = {
-  right.map({f =>
-    println(s"processing $f")
-      f.toString + "lala"
-  })
-}
-
-l.foldLeft(List.empty[String])(lint)
+List.tabulate(5)(y => y/2)
