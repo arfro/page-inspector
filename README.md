@@ -17,9 +17,6 @@ User sumbits a link which gets sanitized and passed to JSoup for extraction of H
 ### Error handling
 The application has the basic error handling implemented: incorrect user input, timouts, problems or missing data related to JSoup.
 
-### Challenge:
-As I haven't worked closely with Play MVC or front-end before it was definitely the biggest challenge in the task given how little time I was allowed to take.
-
 ### Improvements to the application:
 As I mentioned right in the beginning this solution is not near production ready. As much as I tried to keep it clean and ok-designed the time constraint took its toll on the way the project is designed, tested an structured.
 - the code needs a general refactor. Right now the implementation is tied to JSoup which is called within functions which makes it impossible to pick and choose implementations and therefore properly test. I can imagine this code would be a perfect candidate to take advantage of higher order functions where I would be passing functions to functions rather than hardcoding implementation inside of the function.
