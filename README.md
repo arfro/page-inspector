@@ -1,6 +1,4 @@
-### Design & time note
-
-Given a very short amount of time allocated for this task, a limited knowledge in the tools and technologies used I went for a solution that works but is *very* far from prod ready. I decided to submit as is and write a little explanation. The service works fine however the under-the-hood needs improvements.
+A service that inspects html of pages.
 
 ### Stack & technology
 I decided to use Scala, sbt, JSoup and Play. Play has a nice support for model-view-controller pattern but I have to admit I haven't worked much with Play before, so this was a novelty for me just like JSoup. 
@@ -42,6 +40,3 @@ As I mentioned right in the beginning this solution is not near production ready
 
 ### Running tests
 `sbt test`
-
-### Take away point:
-The task was fun although I would have needed more time to deliver a good solution that would show off my real-life code standard. Even though the solution isn't perfect I do feel like I learnt something new, which is great :) This task was a nice reminder of how much more there is always to learn when it comes to programming and technology.
